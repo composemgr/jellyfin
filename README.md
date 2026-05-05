@@ -45,11 +45,11 @@ See `docker-compose.yaml` for complete list of configurable options.
 
 ## 📂 Volumes
 
-- `./rootfs/config/jellyfin` - Data storage
-- `./rootfs/data/jellyfin` - Data storage
-- `./rootfs/data/media/movies` - Data storage
-- `./rootfs/data/media/tv` - Data storage
-- `./rootfs/data/media/music` - Data storage
+- `./volumes/config/jellyfin` - Data storage
+- `./volumes/data/jellyfin` - Data storage
+- `./volumes/data/media/movies` - Data storage
+- `./volumes/data/media/tv` - Data storage
+- `./volumes/data/media/music` - Data storage
 
 ## 🔍 Logging
 
