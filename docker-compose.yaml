@@ -20,11 +20,11 @@ services:
       TZ: ${TZ:-America/New_York}
       JELLYFIN_PublishedServerUrl: ${BASE_DOMAIN_NAME:-${BASE_HOST_NAME:-localhost}}
     volumes:
-      - ./rootfs/config/jellyfin:/config
-      - ./rootfs/data/jellyfin:/cache
-      - ./rootfs/data/media/movies:/media/movies:ro
-      - ./rootfs/data/media/tv:/media/tv:ro
-      - ./rootfs/data/media/music:/media/music:ro
+      - ./volumes/config/jellyfin:/config
+      - ./volumes/data/jellyfin:/cache
+      - ./volumes/data/media/movies:/media/movies:ro
+      - ./volumes/data/media/tv:/media/tv:ro
+      - ./volumes/data/media/music:/media/music:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8096/health"]
       interval: 30s
