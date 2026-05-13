@@ -16,11 +16,15 @@ services:
     logging: *default-logging
     networks:
       - jellyfin
+      - proxy
+      - cloudflare
     ports:
       - "172.17.0.1:8096:8096"
     environment:
       TZ: ${TZ:-America/New_York}
       JELLYFIN_PublishedServerUrl: ${BASE_DOMAIN_NAME:-${BASE_HOST_NAME:-localhost}}
+      CONTAINER_NAME: jellyfin-app
+      HOSTNAME: ${BASE_HOST_NAME:-$HOSTNAME}
     volumes:
       - ./volumes/config/jellyfin:/config
       - ./volumes/data/jellyfin:/cache
@@ -32,8 +36,28 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    labels:
+      - 'traefik.enable=true'
+      - 'cloudflare.enable=true'
+      - 'traefik.docker.network=proxy'
+      - 'cloudflare.service=http://jellyfin-app:8096'
+      - 'cloudflare.hostname=jellyfin.${CLOUDFLARE_ZONE_NAME:-}'
+      - 'traefik.http.routers.jellyfin-app.entrypoints=http'
+      - 'traefik.http.routers.jellyfin-app-secure.tls=true'
+      - 'traefik.http.routers.jellyfin-app.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
+      - 'traefik.http.middlewares.jellyfin-app-https-redirect.redirectscheme.scheme=https'
+      - 'traefik.http.routers.jellyfin-app.middlewares=jellyfin-app-https-redirect'
+      - 'traefik.http.routers.jellyfin-app-secure.entrypoints=https'
+      - 'traefik.http.routers.jellyfin-app-secure.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
+      - 'traefik.http.routers.jellyfin-app-secure.tls.certresolver=cloudflare'
+      - 'traefik.http.routers.jellyfin-app-secure.service=jellyfin-app'
+      - 'traefik.http.services.jellyfin-app.loadbalancer.server.port=8096'
 
 networks:
   jellyfin:
     name: jellyfin
     external: false
+  proxy:
+    external: true
+  cloudflare:
+    external: true
