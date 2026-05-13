@@ -1,5 +1,6 @@
 # nginx proxy address - http://172.17.0.1:8096
 
+name: jellyfin
 x-logging: &default-logging
   driver: json-file
   options:
@@ -9,13 +10,14 @@ x-logging: &default-logging
 services:
   jellyfin:
     image: jellyfin/jellyfin:latest
+    pull_policy: always
     container_name: jellyfin-app
-    restart: unless-stopped
+    restart: always
     logging: *default-logging
     networks:
       - jellyfin
     ports:
-      - "8096:8096"
+      - "172.17.0.1:8096:8096"
     environment:
       TZ: ${TZ:-America/New_York}
       JELLYFIN_PublishedServerUrl: ${BASE_DOMAIN_NAME:-${BASE_HOST_NAME:-localhost}}
@@ -33,4 +35,5 @@ services:
 
 networks:
   jellyfin:
+    name: jellyfin
     external: false
